@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" id="viewport" content="width = device-width, initial-scale = 1, minimum-scale = 1, maximum-scale = 1">
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<title></title>
+		<style>	
+			body,div,section,span,ul,li,img,p{padding: 0; margin: 0;}
+			body{ font-family:'Microsoft YaHei'; overflow: hidden; position:relative; margin : 0 auto;}
+			ul{ list-style: none;}
+			.game-bg{ width: 100%; position: absolute; left: 0; top: 0; z-index: 3; overflow: hidden;}
+			#game-warp{ position: absolute; left: 0; top: 0; width: 100%; height:100%; background: url(img/bg_game.jpg) no-repeat; background-size:100%;background-position:bottom; background-position-y:0px; z-index: 2;overflow: hidden;}
+			#score{ position: absolute; left: 10px; top: 5px; font:  italic bold 18px/1 'Microsoft YaHei'; color:#fbed06; text-shadow: #ce7800 1px 1px 1px;}
+			#end{ width: 100%; height: 100%; background: url('img/bg_end.jpg') no-repeat; background-size:100%;  position: absolute; left: 0; top: 0; text-align: center; z-index: 1; display: none; overflow: hidden;}
+			#end span{ position: absolute; display: block;}	
+			#head { width: 23%; height:12%; background: #000; left: 17%; top: 30%; border:3px #c4dc42 solid; border-radius:50%; box-shadow:2px 2px 1px 1px #999; overflow: hidden;}
+			#endScore{ width: 100%; text-align: center; top: 46%; font-size: 1rem; color: #fff; text-shadow: #c23634 2px 3px 1px;}
+			#highScore{ top: 57.5%; left: 56%; font-size: 0.5rem; color: #542a31;}
+			#again{ width: 24%; height: 7%; background:rgba(0,0,0,0); left: 21%; top: 61%;}
+			#showScore{background:rgba(0,0,0,0); width: 33%; height: 7%; left: 52%; top: 61%; cursor:pointer;}
+
+			#showPrize{background:rgba(0,0,0,0); width: 42%; height: 7%; left: 34%; top: 73%;}
+
+			#rank-page{ position: absolute; left: 0; top: 0; width: 90%; padding: 0 5%; background:url('img/bg_rank.jpg') no-repeat; background-size:100%; height: 100%; overflow: hidden; display:none; z-index:999; }
+			#rank-list{ width: 90%; margin-left:10%;  margin-top:25%; height: 75%; overflow: auto;}
+			#rank-list li { line-height: 32px;}
+			#rank-list li span{display:inline-block; color: #1f4971; font-size: 20px; text-shadow: #cfcfcf 1px 1px 1px;}
+			#rank-list li span:nth-of-type(1){ width:15%;}
+			#rank-list li span:nth-of-type(2){ width:55%;}
+			#rank-list li span:nth-of-type(3){ width:30%;}
+			#rank-list li.current span{ color: #ffee23;}
+			#rank-page-close{ display: block; position: absolute; width: 0.6rem; height:0.6rem; background: url('img/btn_pop_close.png') no-repeat; background-size:100%; right: 0.2rem; top: 0.2rem;}
+			#rank-popup{ position:absolute; top: 40%; width:70%; left: 10%; background: #fff; padding: 3% 5%; border:1px #4c9d24 solid; border-radius: 20px;}
+			#rank-popup p{ line-height: 38px; font-size: 26px; text-align: center; color: #1f4a6d;}
+			#rank-popup p span{ color: #fe9307; margin:0 5px;}
+			.rank-popup-close{ position: absolute; width: 0.5rem; height:0.5rem; background: url('img/btn_pop_close.png') no-repeat; background-size:100%; right: 0.2rem; top: 0.2rem;}
+
+			.prize-page{ background: url('img/bg_prize.jpg') no-repeat;  width: 100%; height: 100%; background-size:100%;  position: absolute; left: 0; top:0; z-index:7; display: none;}
+			.prize-page a{position: absolute; display: block;}
+			#link-shop{ width: 100%; height: 11%; left: 0; top:  9%;}
+			#link-active{width: 47%; height: 9%; left: 51%; top: 16%;}
+			#link-box{width: 55%; height: 25%; left: 21%; top: 56%;}
+			.prize-pop{ position: fixed; left: 5%; top: 50%; width: 90%; background: url('img/bg_get_gift.jpg') no-repeat; background-size:100%; display: none;}
+			.prize-pop p{ width: 70%; position: absolute; left: 15%; top: 23%; font-size: 20px; height: 100px; color: #f98d00;}
+			#prize-pop-btn{ position: absolute; display:block; width: 42%; height: 13%; left: 29%; top: 61%; }
+			.ctrl-sound{ position: absolute; right: 0.5rem; top:8px; background-image: url('img/bg_sound_off.png'); background-size: 100% 100%; width: 0.8rem; height: 0.7rem; }
+			.hint-popup{ position: absolute;z-index: 10;left: 50%; margin-left:-40px;top: 50%; margin-top:-50px; color: #555;display: none;background: rgba(255,255,255,1) 15px 15px no-repeat; background-image:url('./img/bg_progress.gif'); background-size:50px 50px;  width: 80px; height:20px; line-height:1px; border-radius: 10px; padding-top: 80px; font-size:14px; text-align:center; opacity: 0.6;}
+		</style>
+	</head>
+	<body>
+		<div class="hint-popup">
+			正在加载..
+		</div>
+		<div id="game-bg" class="game-bg">
+			<canvas id="game-view"></canvas>
+			<span id="score"></span>
+			<div class="ctrl-sound"></div>
+		</div>
+		<div id="game-warp"></div>
+		<div id="end">
+			<img src="img/bg_end.jpg" width="100%"/>
+			<span id="head"><img src="img/bg_welcome.jpg" width="100%"/></span>
+			<span id="endScore">6767m</span>
+			<span id="again"></span>
+			<span id="showScore"></span>
+			<span id="showPrize"></span>
+		</div>
+		<div id="rank-page">
+			<span id="rank-page-close"></span>
+			<div id="rank-popup">
+				<span id="rank-popup-close" class="rank-popup-close"></span>
+				<div id="rank-msg">
+					
+				</div>
+			</div>
+			<ul id="rank-list">	
+			</ul>
+		</div>
+
+		<div class="prize-page" id="prize-page">
+			<a href="https://realwill.tmall.com/" target="_blank" id="link-shop"></a>
+			<a href="javascript:void(0)" target="self" id="link-box"></a>
+			<div class="prize-pop" id="prize-pop">
+				<p>有缘千里来相会，专属奖品更实惠￥尊享润微旗舰店VIP￥复制整段文字，再打开【手机淘宝】，点击查看，加入即可领取神秘奖品</p>
+				<!--<a href="javascript:void(0)" id="prize-pop-btn"></a>-->
+			</div>
+		</div>
+		<script src="./js/device.js"></script>
+		<script>
+			//global 可用常量写法替换
+			var isDevice = document.documentElement.className.indexOf('mobile') + 1;
+			var pcWidth = 320;
+			var pcHeight = 568;
+			//judge event type pc or mobile
+		    var eventClick = !isDevice ? 'mousedown' : 'touchstart',
+		        eventMove = !isDevice ? 'mousemove' : 'touchmove',
+		        eventEnd = !isDevice ? 'mouseup' : 'touchend';
+		    // judge weixin
+		    var isWeixin = function(){
+		    	var ua = navigator.userAgent.toLowerCase();
+		    	if(ua.match(/MicroMessenger/i)=="micromessenger") {
+		    		return true;
+		    	}else{
+		    		return false;
+		    	}
+		    }();
+		    //weixin nickname
+			var user_Nickname = function() {	    
+			    if(isWeixin) {
+			    	return user_Nickname = '<?php echo $name ?>' ;
+			    }else{
+			    	return user_Nickname = '微博用户';
+			    }
+			}();
+		    if(!isDevice){
+				//for pc
+				document.body.style.width = pcWidth + "px";
+				document.body.style.height = pcHeight + "px";
+			}else{
+				document.body.style.height = window.innerHeight + "px";
+			}
+			
+		</script>
+		<script src="js/buzz.js"></script>
+		<script src="js/dom.js"></script>
+		<script src="js/Class.js"></script>
+		<script src="js/play.js"></script>
+		<script>
+			(function(){
+				var showPrize = document.getElementById('showPrize');
+				var prizePage = document.getElementById('prize-page');
+				var linkBox = document.getElementById('link-box');
+				var prizePop = document.getElementById('prize-pop');
+				var prizeBtn = document.getElementById('prize-pop-btn');
+
+				
+				
+				if(!isDevice){
+					var marginLeft = (window.innerWidth - 320) / 2;
+					prizePop.style.cssText = "width:320px; left:0; margin-left:"+marginLeft+"PX;"
+					prizePop.style.height =  320 / 640 * 599 + 'px';
+					prizePop.style.marginTop = (320 / 640 * 599 ) / -2 + 'px';
+					prizePage.style.height = 568 + 'px';
+				}else{
+					prizePop.style.height =  window.innerWidth / 640 * 599 + 'px';
+					prizePop.style.marginTop = (window.innerWidth / 640 * 599 ) / -2 + 'px';
+					prizePage.style.height = window.innerWidth / 640 * 1200 + 'px';
+				}
+				
+				showPrize.addEventListener(eventClick,function(){
+					event.preventDefault();
+					prizePage.style.display = 'block';
+				},false);
+
+				prizePage.addEventListener(eventClick,function(){
+					//event.preventDefault();
+					prizePop.style.display = 'block';
+				})
+			})();
+		</script>
+		
+	</body>
+</html>

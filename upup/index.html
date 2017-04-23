@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" id="viewport" content="width = device-width, initial-scale = 1, minimum-scale = 1, maximum-scale = 1">
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<title></title>
+		<style>
+			html{ margin : 0 auto;}	
+			body,div,section,span,ul,li,img,p{padding: 0; margin: 0;}
+			body{ font-family:'Microsoft YaHei'; margin: 0 auto; overflow: hidden;}
+			ul{ list-style: none;}
+			img{ display: block;}
+			.welcome{ width:100%; background-size:100%; position: relative; z-index: 4; overflow: hidden;}
+			#play{ position:absolute; background: rgba(0,0,0,0);  width: 50%; height:11%; left: 26%; top: 56%; }
+		</style>
+	</head>
+	<body>
+		<div class="welcome">
+			<img src="img/bg_welcome.jpg" width="100%"/>
+		 	<a href="game.html" target="_self" id="play"></a>
+		</div>
+		<script src="./js/device.js"></script>
+		<script>
+			var isDevice = document.documentElement.className.indexOf('mobile') + 1;
+			var play = document.getElementById('play');
+			var pcWidth = 320;
+			var pcHeight = 568;
+			if(!isDevice){
+				//for pc
+				document.body.style.width = pcWidth + "px";
+				document.body.style.height = pcHeight + "px";
+			}
+		</script>
+	</body>
+</html>
