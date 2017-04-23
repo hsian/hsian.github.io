@@ -12,6 +12,11 @@ var color_Count;//总次数
 var fullWidth = document.documentElement.clientWidth;
 var fullHeight = document.documentElement.clientHeight;
 
+var isTouch = 'ontouchstart' in document ? true : false;
+var touchstart = isTouch ? "touchstart" : 'mousedown';
+var touchmove = isTouch ? "touchmove" : 'mousemove';
+var touchend = isTouch ? "touchend" : 'mouseup';
+
 //设置rem
 document.documentElement.style.fontSize = fullWidth / 10 + 'px';
 
@@ -60,18 +65,24 @@ window.onload = function(){
 	var pageX ,moveX,
 		leftX = 0;
 
-	colorList.addEventListener('touchstart',function(){
+	colorList.addEventListener(touchstart,startHandle);
+
+	function startHandle(event){
 		event.preventDefault();
-		//curX = event.targetTouches[0].pageX;
-		pageX = event.targetTouches[0].pageX - leftX;
-	},false);
-	colorList.addEventListener('touchmove',function(){
+		pageX = isTouch ? event.targetTouches[0].pageX : event.pageX;
+		pageX = pageX - leftX;
+		colorList.addEventListener(touchmove,moveHandle);
+		colorList.addEventListener(touchend,endHandle)
+	}
+
+	function moveHandle(event){
 		event.preventDefault();
-		moveX = event.targetTouches[0].pageX;
+		moveX = isTouch ? event.targetTouches[0].pageX : event.pageX;
 		leftX =  moveX -pageX;
 		colorList.style.left = leftX + 'px';
-	},false);
-	colorList.addEventListener('touchend',function(){	
+	}
+
+	function endHandle(event){
 		if(colorList.offsetLeft > 0){
 			colorList.style.left = 0;
 			leftX = 0;
@@ -81,9 +92,8 @@ window.onload = function(){
 			leftX = -(colorList.offsetWidth - window.innerWidth * 0.94);
 		}
 		event.preventDefault();
-		colorList.removeEventListener('touchstart');
-		colorList.removeEventListener('touchmove');
-	},false)
+		colorList.removeEventListener(touchmove,moveHandle);	
+	}
 
 	pageGame.style.height = fullHeight + 'px';
 	canvas.style.width = fullWidth + 'px';
@@ -106,14 +116,14 @@ window.onload = function(){
 
 	//颜色选择	
 	var color;//需要改变的颜色
-	colorList.addEventListener('touchstart',function(){
+	colorList.addEventListener(touchstart,function(){
 		color = getStyle(event.target,'color');
 		var className;
 		for(var i = 0; i < colorAll.length; i++){
 			//className = colorAll[i].className;
-			colorAll[i].className = (colorAll[i].className).replace(/current/,'');
+			colorAll[i].classList.remove('current');
 		}
-		event.target.className = event.target.className + ' current';	
+		event.target.classList.add('current')
 		color_Inow = event.target.id;		
 	})
 	var shapeArr = [];
@@ -178,7 +188,7 @@ window.onload = function(){
 		image = canvas.toDataURL();
 		return image;
 	}
-	finish.addEventListener('touchstart',function(){
+	finish.addEventListener(touchstart,function(){
 		var data = convertCanvasToImage(canvas)
 		Ajax.request('/realwill/temp/scrawl/saveImg.php',{
 			method : 'POST',
