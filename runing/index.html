@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+
+<html lang="zh-cn" dir="ltr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" id="viewport" content="width = device-width, initial-scale = 1, minimum-scale = 1, maximum-scale = 1">
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<style>
+			body,div,section,span,ul,li,img,p{padding: 0; margin: 0;}
+			body{ font-family:'Microsoft YaHei'; overflow: hidden; position:relative; margin : 0 auto;}
+			ul{ list-style: none;}
+			.home{ width: 320px; height: 700px; margin:0 auto; position:relative;}
+			#view{ width: 320px; height: 568px; background:#f0f0f0;}
+			.btn-list{ position: absolute; right: 1%; top: 1%; }
+			.btn-list button{ padding: 5px; }
+			#btn-sublist{ float: right; margin-left: 5px; }
+			.mr10{ margin-right:10px;}
+			.n-ls{ position: absolute;}
+			.score{ left: 5px; top: 5px; }
+			.count{ left: 100px; top: 5px;}
+			.share-dialog{ position:absolute; left: 10%; width: 80%; margin: 0 auto; padding:20px 0 ;top: 20%;  text-align: center; background: #dfdfdf;}
+			#share{ margin-top: 10px;}
+			#count-down{ position: absolute; width:50px; height: 50px; left: 50%; top: 45%; margin-left: -25px; background: #ddd; line-height: 50px; border-radius: 50%; text-align: center;}
+			#share-notice{ position: absolute; top: 5%; left: 0;}
+		</style>
+	</head>
+	<body>
+		<div class="home">
+			<span class="score n-ls">score : <em id="score"><?php echo $user_res['score'] ?></em></span>	
+			<span class="count n-ls">count : <em id="count"> <?php echo $user_res['run_index']?></em></span>
+			<!--<div class="share-dialog">
+				<p>share with your friends</p>
+				<button id="share">分享到朋友圈</button>
+			</div>-->
+			<div id="share-notice"><?php echo $shareNotice ?></div>
+			<canvas id="view" width="320" height="568">很遗憾，您的浏览器不支持HTML5，请使用支持HTML5的浏览器。</canvas>
+			<div class="btn-list">
+				<button id="start-game">start game</button>
+				<div id="btn-sublist" style="display:none;">
+					<button id="stop-game" >- stop -</button>
+					<button id="continue" style="display:none;">continue</button>
+				</div>
+			</div>
+			<div id="request-openid" style="display:none;"><?php echo $openid ?></div>
+			<div id="count-down">10</div>
+		</div>
+		
+		<script src="./js/zepto.min.js"></script>
+		<script src="./js/app.js"></script>
+
+		<script>
+				var openid = $('#request-openid').html();
+				var url = "http://game.realwill.com/temp/runing/index.php?preid=" + openid + "&type=reference";
+				
+		</script>
+	</body>
+</html>
