@@ -2,8 +2,13 @@
 <html lang="zh-cn">
 <head>
 	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<title>Document</title>
 	<style>
+		*{
+			margin:0;
+			padding:0;
+		}
 		#canvas{
 			background: #f5f5f5;
 		}
@@ -11,8 +16,7 @@
 </head>
 <body>
 
-<canvas id="canvas" width="800" height="500"></canvas>
-
+<canvas id="canvas"></canvas>
 
 <script>
 	//画布
@@ -20,6 +24,9 @@
 	//画笔
 	var ctx = canvas.getContext("2d");
 	var clientX,clientY;
+
+	canvas.width = window.innerWidth;
+	canvas.height = window.innerHeight;
 
 canvas.addEventListener("click",function(e){
 	// console.log(e)
@@ -168,8 +175,8 @@ var Rock={
 
 		if(this.x==0 && this.y==0){
 			//随机点的坐标
-			this.x=Math.floor(Math.random()*(750-20));
-			this.y=Math.floor(Math.random()*(450-20));
+			this.x=Math.floor(Math.random()*(canvas.width-20));
+			this.y=Math.floor(Math.random()*(canvas.height-20));
 
 		}
 		if(this.isExist)return;
