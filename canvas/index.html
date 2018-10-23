@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+		#canvas{
+			background: #f5f5f5;
+		}
+	</style>
+</head>
+<body>
+
+<canvas id="canvas" width="800" height="500"></canvas>
+
+
+<script>
+	//画布
+	var canvas =document.getElementById("canvas");
+	//画笔
+	var ctx = canvas.getContext("2d");
+	var clientX,clientY;
+
+canvas.addEventListener("click",function(e){
+	// console.log(e)
+	clientX=e.clientX;
+	clientY=e.clientY;
+})
+
+	function start(){
+
+		ctx.clearRect(0,0, canvas.width, canvas.height);
+
+		//绘制石头
+		Rock.draw();
+
+		// 画布操作
+		Role.move();
+		Role.draw();
+
+		//碰撞检测
+		Rock.isHit();
+
+		
+
+		requestAnimationFrame(start);
+	}
+
+	//每秒切换60帧数
+	requestAnimationFrame(start);
+
+	
+	//角色管理
+	var Role={
+		src:"./role.png",
+		sx:0,
+		sy:0,
+		swidth:26,
+		sheight:38,
+		x:20,
+		y:200,
+		fps:0,
+		count:0,
+		vx:3, // 速度
+		vy:3,
+		f:0.05,
+		scale:1.0,
+
+		targetX:0,
+
+		hasDireact: false,
+		
+		draw:function(){
+			var img= new Image();
+			img.src= this.src;
+
+			ctx.drawImage(img,this.sx,this.sy,this.swidth,this.sheight,this.x,this.y,this.swidth*this.scale,this.sheight*this.scale)
+		},move:function(){
+			this.count++;
+			//5帧切换一次图片
+			if(this.count>5){
+				this.count=0;
+				this.changeImage();
+			}
+
+			if(clientX){
+				// var disX =clientX-this.x;
+				// var disY =clientY-this.y;
+
+				// var vx = disX*this.f;
+				// var vy = disY*this.f;
+				
+
+				// if(vx<0){
+				// 	this.src = "./role2.png"
+				// }else{
+				// 	this.src = "./role.png"
+				// }
+				// this.x = this.x + vx;
+				// this.y = this.y + vy;
+
+				
+				// 匀速运动		
+				if(clientX < this.x){
+					this.src = "./role2.png"
+				}
+
+				if(clientX > this.x){
+					this.src = "./role.png"
+				}
+
+
+				var disX = clientX - this.x;
+				var disY = clientY - this.y;
+
+				var c = Math.atan2( disY, disX )
+
+
+				var vx = Math.floor(5 * Math.cos(c));
+				var vy = Math.floor(5 * Math.sin(c));
+
+				if(Math.abs(clientX - this.x) < 5 &&  Math.abs(clientY - this.y) < 5){
+					return;
+				}
+
+				this.x = this.x + vx;
+				this.y = this.y + vy;
+			}
+			
+
+			// this.x = this.x + this.vx;
+
+			// if(this.x>canvas.width){
+			// 	this.src = "./role2.png",
+			// 	this.vx=-2;
+			// }
+			// if(this.x<0){
+			// 	this.src = "./role.png",
+			// 	this.vx=1;
+			// }
+		},
+		changeImage:function(){
+
+			this.fps++;
+			this.sx=this.sx+this.swidth;
+			// 切换到第三张时候重置为0
+			if(this.fps >= 3){
+				this.sx = 0;
+				this.fps = 0;
+
+		}
+	}
+}
+
+var Rock={
+	x:0,
+	y:0,
+	color:"",
+	shapes:[],
+
+	isExist:false,
+	width:20,
+	height:20,
+
+	draw:function(){
+		// if(this.isExist)return;
+		
+
+		if(this.x==0 && this.y==0){
+			//随机点的坐标
+			this.x=Math.floor(Math.random()*(750-20));
+			this.y=Math.floor(Math.random()*(450-20));
+
+		}
+		if(this.isExist)return;
+
+		ctx.beginPath();
+		ctx.lineWidth = 0;
+		ctx.rect(this.x,this.y,20, 20)
+		ctx.fillStyle="green";
+		ctx.fill();
+		ctx.stroke();
+
+	},
+	remove:function(){
+
+	},
+	isHit:function(){
+		var roleX= Role.x+Role.swidth*1.2;
+		var rockX = Rock.x+Rock.width;
+
+		var roleY= Role.y+Role.sheight*1.2;
+		var rockY = Rock.y+Rock.height;
+
+		//碰撞检测
+		if(Math.abs(roleX-rockX)<=Rock.width && Math.abs(roleY-rockY)<=Rock.height){
+			
+			Role.scale*=1.1;
+			//重新生成随机坐标
+			this.x=0;
+			this.y=0;
+			
+		}
+	}
+
+}
+</script>
+
+</body>
+</html>
